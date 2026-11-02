@@ -32,6 +32,13 @@ namespace {
         return std::nullopt;
     }
 
+    std::string asdir(std::string p) {
+        if (!p.empty() && p.back() != '/' && p.back() == '\\') {
+            p.push_back('/');
+        }
+        return p;
+    }
+
     void merge(kwr::options& o, const kwr::cfg& c) {
         if (o.ns.empty()) {
             o.ns = c.ns;
@@ -40,7 +47,7 @@ namespace {
             o.keyfile = c.keyfile;
         }
         if (o.save_to.empty() && !o.no_save) {
-            o.save_to = c.vault_dir;
+            o.save_to = asdir(c.vault_dir);
         }
         if (o.clip_timeout == 0) {
             o.clip_timeout = c.clip_secs;
