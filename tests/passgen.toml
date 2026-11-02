@@ -1,0 +1,7 @@
+clipboard_timeout_seconds = 45
+keyfile = "keys/main.key"
+vault_dir = "vault"
+default_namespace = "x-twitter"
+kdf_profile = "sensitive"
+symbols = "!@#$"
+exclude_ambiguous = true
