@@ -8,6 +8,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 	keywright::secrets
 	keywright::platform
 	keywright::config
+	keywright::vault
 	unofficial-sodium::sodium
 	CLI11::CLI11
 )
