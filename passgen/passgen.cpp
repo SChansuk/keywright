@@ -2,6 +2,7 @@
 #include "credgen.h"
 #include "setup.h"
 #include "keyfile.h"
+#include "store.h"
 
 #include <keywright/platform.h>
 
@@ -65,9 +66,32 @@ namespace {
         return p;
     }
 
-    int generate(const kwr::options& o, const kwr::pwpol& p) {
+    void save(const kwr::options& o, const kwr::cfg& c, const kwr::secret_buffer& pw) {
+        if (o.keyfile.empty()) {
+            throw kwr::exit_error(1, "a keyfile is required to save via --keyfile or the config");
+        }
+        const auto key = kwr::readkey(o.keyfile);
+        const std::string path = kwr::vpath(o.save_to, key.bytes(), o.ns);
+        kwr::vsave(path, o.ns, o.user, pw, key.bytes(), kwr::kdfmap(c.kdf), o.force);
+        std::fprintf(stderr, "saved to %s\n", path.c_str());
+    }
+
+    int generate(const kwr::options& o, const kwr::cfg& c) {
         try {
-            const auto pw = kwr::pwgen(p, o.min_len);
+            const auto pw = kwr::pwgen(policy(c), o.min_len);
+            if (!o.save_to.empty()) {
+                try {
+                    save(o, c, pw);
+                }
+                catch (const kwr::exit_error& e) {
+                    std::fprintf(stderr, "%s\n", e.what());
+                    return e.code;
+                }
+                catch (const std::exception& e) {
+                    std::fprintf(stderr, "%s\n", e.what());
+                    return 4;
+                }
+            }
             if (o.print) {
                 std::fwrite(pw.data(), 1, pw.size(), stdout);
                 std::fputc('\n', stdout);
@@ -163,7 +187,7 @@ namespace {
         }
 
         if (!o.get && !o.list) {
-            return generate(o, policy(c));
+            return generate(o, c);
         }
         std::fputs("not implemented yet\n", stderr);
         return 1;

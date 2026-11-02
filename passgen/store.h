@@ -1,19 +1,26 @@
 #pragma once
 
+#include <keywright/secrets.h>
 #include <keywright/vault.h>
 
 #include <cstddef>
 #include <span>
+#include <stdexcept>
 #include <string>
 
 namespace kwr {
 
-	/// Resolves the vault file for a namespace.
-	/// An existing directory, or a path ending in a separator, is a directory
-	/// and gets the keyed filename. Anything else is used as the file path as given.
-	std::string vpath(const std::string& save_to, std::span<const std::byte> keyfile, const std::string& ns);
+    struct exit_error : std::runtime_error {
+        int code;
+        exit_error(int c, const std::string& m) : std::runtime_error(m), code(c) {}
+    };
 
-	/// Maps "moderate" or "sensitive" to the vault KDF profile.
-	vkdf kdfmap(const std::string& name);
+    std::string vpath(const std::string& save_to, std::span<const std::byte> keyfile, const std::string& ns);
+
+    vkdf kdfmap(const std::string& name);
+
+    /// Throws exit_error: 1 bad input, 2 account exists without force, 3 cannot open.
+    void vsave(const std::string& path, const std::string& ns, const std::string& user,
+        const secret_buffer& pw, std::span<const std::byte> keyfile, vkdf kdf, bool force);
 
 }
