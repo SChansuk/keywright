@@ -5,6 +5,7 @@ add_executable(passgen_tests "credgen_tests.cpp" "../credgen.cpp" "keyfile_tests
 target_include_directories(passgen_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
 target_link_libraries(passgen_tests PRIVATE
 	keywright::secrets
+	keywright::platform
 	unofficial-sodium::sodium
 	Catch2::Catch2WithMain)
 set_property(TARGET passgen_tests PROPERTY CXX_STANDARD 20)
