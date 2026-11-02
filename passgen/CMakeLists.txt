@@ -3,7 +3,7 @@
 find_package(unofficial-sodium CONFIG REQUIRED)
 find_package(CLI11 CONFIG REQUIRED)
 
-add_executable(${PROJECT_NAME} "passgen.cpp" "passgen.h" "credgen.cpp" "credgen.h" "setup.cpp" "setup.h" "keyfile.h" "keyfile.cpp")
+add_executable(${PROJECT_NAME} "passgen.cpp" "passgen.h" "credgen.cpp" "credgen.h" "setup.cpp" "setup.h" "keyfile.h" "keyfile.cpp" "store.h" "store.cpp")
 target_link_libraries(${PROJECT_NAME} PRIVATE 
 	keywright::secrets
 	keywright::platform
